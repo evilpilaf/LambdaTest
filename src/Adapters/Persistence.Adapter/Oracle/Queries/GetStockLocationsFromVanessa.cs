@@ -27,7 +27,8 @@ namespace Persistence.Adapter.Oracle.Queries
             {
                 DataSource = _options.DataSource,
                 UserID = _options.UserId,
-                Password = await GetDecryptedPassword()
+                Password = await GetDecryptedPassword(),
+                LoadBalancing = _options.LoadBalancing
             };
 
             using (var cnn = new OracleConnection(builder.ConnectionString))

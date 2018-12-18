@@ -12,5 +12,8 @@ namespace Persistence.Adapter
         
         [Required(AllowEmptyStrings = false)]
         public string Password { get; private set; }
+
+        [Required]
+        public bool LoadBalancing { get; private set; }
     }
 }

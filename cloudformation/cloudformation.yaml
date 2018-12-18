@@ -1,0 +1,125 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: "AWS::Serverless-2016-10-31"
+Description: Private resources for the Lambda POC from Stock Management 1 team
+Parameters:
+  AppGroup:
+    Type: String
+    Default: restocking-accepted-proposal-sender
+  Environment:
+    Type: String
+    AllowedValues:
+      - development
+      - testing
+    Default: development
+    ConstraintDescription: Must be one of the values from the list.
+    Description: Environment in which resources are deployed.
+  OracleHost:
+    Type: String
+    Description: Host for the oracle database
+  OracleUserName:
+    Type: String
+    Description: User name for the oracle database
+    Default: srv_stockpurchasing_mql
+  OraclePassword:
+    Type: String
+    Description: Encrypted password for the oracle database
+  IsLoadBalancing:
+    Type: String
+    Description: Signals if the oracle connection is load balanced
+    AllowedValues:
+      - "True"
+      - "False"
+    Default: "False"
+Resources:
+  PrivateSecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: "Allowed incoming/outgoing traffic to/from the internal resources"
+      SecurityGroupEgress:
+        - CidrIp: "0.0.0.0/0"
+          FromPort: 443
+          ToPort: 443
+          IpProtocol: "tcp"
+      VpcId: !ImportValue "infrastructure-vpc"
+      Tags:
+        - Key: "Name"
+          Value: !Sub "${AWS::StackName}-private"
+        - Key: "AppRole"
+          Value: "security-group"
+        - Key: "Environment"
+          Value: !Ref "Environment"
+        - Key: "AppGroup"
+          Value: !Ref "AppGroup"
+  SM1ProofOfConceptLambda:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      Handler: "Lambda::Lambda.Lambda::Handler"
+      Runtime: dotnetcore2.0
+      CodeUri: ./artifacts/AWSLambda.zip
+      Description: ""
+      MemorySize: 512
+      Timeout: 15
+      FunctionName: !Sub "${AppGroup}-lambda"
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref "PrivateSecurityGroup"
+        SubnetIds: !Split [",", !ImportValue "infrastructure-lambda-subnets"]
+      Tags:
+        Name: !Sub "${AWS::StackName}"
+        AppGroup: !Sub "${AWS::StackName}"
+        AppRole: "function"
+        Environment: !Ref "Environment"
+      Role:
+        Fn::ImportValue: !Sub "${AppGroup}-iam-lambda-role"
+      Events:
+        SQSEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt SQSQueue.Arn
+            BatchSize: 1
+      Environment:
+        Variables:
+          Oracle__DataSource: !Ref OracleHost
+          Oracle__UserId: !Ref OracleUserName
+          Oracle__Password: !Ref OraclePassword
+          Oracle__LoadBalancing: !Ref IsLoadBalancing
+  SQSQueue:
+    Type: "AWS::SQS::Queue"
+    Properties:
+      DelaySeconds: 0
+      QueueName: !Sub "${AppGroup}"
+      ReceiveMessageWaitTimeSeconds: 20
+      MaximumMessageSize: 262144
+      MessageRetentionPeriod: 1209600
+      VisibilityTimeout: 30
+      Tags:
+        - Key: "Name"
+          Value: !Sub "${AppGroup}"
+        - Key: "AppGroup"
+          Value: !Sub "${AppGroup}"
+        - Key: "Environment"
+          Value: !Ref "Environment"
+  QueuePolicy:
+    Type: "AWS::SQS::QueuePolicy"
+    Properties:
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: Allow-SendMessage-To-AcceptedProposal-Queue-From-SNS-Topic
+            Effect: Allow
+            Principal: "*"
+            Action:
+              - sqs:SendMessage
+            Resource: !GetAtt "SQSQueue.Arn"
+            Condition:
+              ArnEquals:
+                aws:SourceArn: !ImportValue restocking-accepted-proposal-topic-arn
+      Queues:
+        - !Ref SQSQueue
+  QueuePublishingPolicy:
+    Type: "AWS::SQS::QueuePolicy"
+    Properties:
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          -

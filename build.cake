@@ -212,7 +212,7 @@ Task("AwsCliPackage")
 
         var settings = new ProcessSettings
         {
-            Arguments = $"cloudformation package --template-file cloudformation.yaml --s3-bucket {samArtifactsBucket} --output-template-file packaged.yaml",
+            Arguments = $"cloudformation package --template-file cloudformation\cloudformation.yaml --s3-bucket {samArtifactsBucket} --output-template-file packaged.yaml",
         };
 
         Information("Starting AWS CLI Packaging of Lambda Function");
@@ -224,14 +224,14 @@ Task("AwsCliPackage")
         Information("AWS CLI Package has finished.");
     });
 
-Task("Run-Local")
+Task("Deploy-Local")
 	.Description("Runs all the acceptance tests locally.")
     .WithCriteria(BuildSystem.IsLocalBuild)
 	.Does(() =>
     {
         var settings = new ProcessSettings
         {
-            Arguments = "local invoke \"AdyenPaymentNotificationFunction\" -e event.json --template cloudformation.yaml",
+            Arguments = "local invoke \"AdyenPaymentNotificationFunction\" -e event.json --template cloudformation\cloudformation.yaml",
         };
 
         Information("Starting the SAM local...");
