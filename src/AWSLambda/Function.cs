@@ -7,10 +7,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
+using Microsoft.Extensions.Logging;
 
 // Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
-
 namespace AWSLambda
 {
     public class Function
@@ -37,9 +37,9 @@ namespace AWSLambda
         /// to respond to SQS messages.
         /// </summary>
         /// <param name="evnt"></param>
-        /// <param name="context"></param>
+        /// <param name="logger"></param>
         /// <returns></returns>
-        public async Task FunctionHandler(SQSEvent evnt, ILambdaContext context)
+        public async Task FunctionHandler(SQSEvent evnt, ILogger<Function> logger)
         {
             foreach (var _ in evnt.Records)
             {
@@ -50,8 +50,8 @@ namespace AWSLambda
 
                     foreach (StockLocationAddress stockLocationAddress in result)
                     {
-                        Console.WriteLine(
-                            $"Id: {stockLocationAddress.StockLocationId}\nDisplayName: {stockLocationAddress.DisplayName}");
+                        logger.LogInformation(
+                            "Id: {StockLocationId} DisplayName: {DisplayName}", stockLocationAddress.StockLocationId, stockLocationAddress.DisplayName);
                     }
                 }
             }
