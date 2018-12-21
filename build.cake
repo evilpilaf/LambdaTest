@@ -274,7 +274,7 @@ Task("Run")
     .IsDependentOn("Test-Unit")
     .IsDependentOn("Publish")
     .IsDependentOn("Pack")
-    .IsDependentOn("Run-Local")
+    .IsDependentOn("Deploy-Local")
     .Does(() => { Information("Run target ran."); });
 
 Task("Default")
