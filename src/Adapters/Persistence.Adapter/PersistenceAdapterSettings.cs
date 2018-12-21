@@ -5,15 +5,15 @@ namespace Persistence.Adapter
     public sealed class PersistenceAdapterSettings
     {
         [Required(AllowEmptyStrings = false)]
-        public string DataSource { get; private set; }
+        public string DataSource { get; set; }
         
         [Required(AllowEmptyStrings = false)]
-        public string UserId { get; private set; }
+        public string UserId { get; set; }
         
         [Required(AllowEmptyStrings = false)]
-        public string Password { get; private set; }
+        public string Password { get; set; }
 
         [Required]
-        public bool LoadBalancing { get; private set; }
+        public bool LoadBalancing { get; set; }
     }
 }
