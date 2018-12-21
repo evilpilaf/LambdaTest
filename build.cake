@@ -1,3 +1,13 @@
+#addin "Newtonsoft.Json&version=10.0.3"
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
+using System.IO;
+using System.IO.File;
+using System.Linq;
+using System.Text;
+
 ///////////////////////////////////////////////////////////////////////////////
 // ARGUMENTS
 ///////////////////////////////////////////////////////////////////////////////
@@ -17,6 +27,8 @@ var projects = new []
 {
     sourceDir.Path + "/AWSLambda/AWSLambda.csproj",
 };
+
+const string functionName = "SM1ProofOfConceptLambda";
 
 // BUILD OUTPUT DIRECTORIES
 var artifactsDir = Directory("./artifacts");
