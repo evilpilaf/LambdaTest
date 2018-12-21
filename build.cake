@@ -233,16 +233,29 @@ Task("Deploy-Local")
     {
         var settings = new ProcessSettings
         {
-            Arguments = "local invoke \"AWSLambda\" -e event.json --template cloudformation/cloudformation.yaml",
+            Arguments = $"local invoke \"{functionName}\" -e event.json --template cloudformation/cloudformation.yaml --env-vars env.json",
+            RedirectStandardOutput = true,
+            RedirectStandardError = true
         };
 
-        Information("Starting the SAM local...");
-        using(var process = StartAndReturnProcess("sam", settings))
+        try
         {
-            process.WaitForExit();
-            Information("Exit code: {0}", process.GetExitCode());
+            Information("Starting the SAM local...");
+            using(var process = StartAndReturnProcess("C:/Program Files/Amazon/AWSSAMCLI/bin/sam.cmd", settings))
+            {
+                process.WaitForExit();
+                foreach(var o in process.GetStandardOutput())
+                {
+                    Information(o);
+                }
+                Information("Exit code: {0}", process.GetExitCode());
+            }
+            Information("SAM local has finished.");
         }
-        Information("SAM local has finished.");
+        catch(Exception ex)
+        {
+            Error($"Exception: {ex.Message}\nStackTrace: {ex.StackTrace}");
+        }
     });
 
 ///////////////////////////////////////////////////////////////////////////////
