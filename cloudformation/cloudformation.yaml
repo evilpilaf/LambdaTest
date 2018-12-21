@@ -53,9 +53,9 @@ Resources:
   SM1ProofOfConceptLambda:
     Type: "AWS::Serverless::Function"
     Properties:
-      Handler: "Lambda::Lambda.Lambda::Handler"
-      Runtime: dotnetcore2.0
-      CodeUri: ./artifacts/AWSLambda.zip
+      Handler: "AWSLambda::AWSLambda.Function::FunctionHandler"
+      Runtime: dotnetcore2.1
+      CodeUri: ../artifacts/AWSLambda.zip
       Description: ""
       MemorySize: 512
       Timeout: 15
@@ -99,27 +99,17 @@ Resources:
           Value: !Sub "${AppGroup}"
         - Key: "Environment"
           Value: !Ref "Environment"
-  QueuePolicy:
-    Type: "AWS::SQS::QueuePolicy"
-    Properties:
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Sid: Allow-SendMessage-To-AcceptedProposal-Queue-From-SNS-Topic
-            Effect: Allow
-            Principal: "*"
-            Action:
-              - sqs:SendMessage
-            Resource: !GetAtt "SQSQueue.Arn"
-            Condition:
-              ArnEquals:
-                aws:SourceArn: !ImportValue restocking-accepted-proposal-topic-arn
-      Queues:
-        - !Ref SQSQueue
   QueuePublishingPolicy:
     Type: "AWS::SQS::QueuePolicy"
     Properties:
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
-          -
+          - Sid: Allow-SendingMessages-To-All-Aws-Users
+            Effect: Allow
+            Principal: "*"
+            Action:
+              - sqs:SendMessage
+            Resource: !GetAtt "SQSQueue.Arn"
+      Queues:
+        - !Ref SQSQueue
