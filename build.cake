@@ -212,7 +212,7 @@ Task("AwsCliPackage")
 
         var settings = new ProcessSettings
         {
-            Arguments = $"cloudformation package --template-file cloudformation\cloudformation.yaml --s3-bucket {samArtifactsBucket} --output-template-file packaged.yaml",
+            Arguments = $"cloudformation package --template-file cloudformation/cloudformation.yaml --s3-bucket {samArtifactsBucket} --output-template-file packaged.yaml",
         };
 
         Information("Starting AWS CLI Packaging of Lambda Function");
@@ -231,7 +231,7 @@ Task("Deploy-Local")
     {
         var settings = new ProcessSettings
         {
-            Arguments = "local invoke \"AdyenPaymentNotificationFunction\" -e event.json --template cloudformation\cloudformation.yaml",
+            Arguments = "local invoke \"AWSLambda\" -e event.json --template cloudformation/cloudformation.yaml",
         };
 
         Information("Starting the SAM local...");
