@@ -1,9 +1,10 @@
-﻿using LambdaCore.Adapters;
 using System.Threading.Tasks;
 
-namespace SecretManagement.Adapter.Kms
+using LambdaCore.Adapters;
+
+namespace SecretManagement.Adapter.InMemory
 {
-    internal sealed class KmsSecretManagementService : ISecretManagementService
+    internal sealed class InMemorySecretManagementService : ISecretManagementService
     {
         public Task<string> DecryptString(string value)
         {

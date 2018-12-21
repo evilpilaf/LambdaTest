@@ -1,8 +1,8 @@
-﻿using LambdaCore.Adapters;
+using LambdaCore.Adapters;
 
 using Microsoft.Extensions.DependencyInjection;
 
-using SecretManagement.Adapter.Kms;
+using SecretManagement.Adapter.InMemory;
 
 namespace SecretManagement.Adapter
 {
@@ -10,7 +10,7 @@ namespace SecretManagement.Adapter
     {
         public static IServiceCollection AddSecretManagementAdapter(this IServiceCollection serviceCollection)
         {
-            serviceCollection.AddScoped<ISecretManagementService, KmsSecretManagementService>();
+            serviceCollection.AddScoped<ISecretManagementService, InMemorySecretManagementService>();
             return serviceCollection;
         }
     }
