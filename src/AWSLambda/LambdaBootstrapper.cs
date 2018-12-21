@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using LambdaCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Persistence.Adapter;
 using SecretManagement.Adapter;
 using Serilog;
@@ -24,12 +24,19 @@ namespace AWSLambda
         {
             IConfigurationRoot config = GetConfiguration();
             var log = new LoggerConfiguration()
-                            .WriteTo.Console(new JsonFormatter(), LogEventLevel.Debug)
-                            .CreateLogger();
+                      .Enrich.FromLogContext()
+                      .MinimumLevel.Verbose()
+                      .MinimumLevel.Override("Microsoft", LogEventLevel.Verbose)
+                      .WriteTo.Console(new JsonFormatter())
+                      .CreateLogger();
+
+            
+
             return new ServiceCollection()
                    .AddLogging(builder =>
-                       builder.AddLambdaLogger().AddSerilog(logger: log, dispose: true))
+                       builder.AddSerilog(logger: log, dispose: true))
                    .Configure<PersistenceAdapterSettings>(config.GetSection("Oracle"))
+                   .AddScoped<UseCase>()
                    .AddSecretManagementAdapter()
                    .AddPersistenceAdapter()
                    .BuildServiceProvider();

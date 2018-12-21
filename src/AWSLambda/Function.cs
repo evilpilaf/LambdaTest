@@ -3,11 +3,12 @@ using Amazon.Lambda.SQSEvents;
 using LambdaCore;
 using LambdaCore.Entities;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Serilog.Context;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
-using Microsoft.Extensions.Logging;
 
 // Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
@@ -33,27 +34,47 @@ namespace AWSLambda
 
 
         /// <summary>
-        /// This method is called for every Lambda invocation. This method takes in an SQS event object and can be used 
+        /// This method is called for every Lambda invocation. This method takes in an SQS event object and can be used
         /// to respond to SQS messages.
         /// </summary>
         /// <param name="evnt"></param>
-        /// <param name="logger"></param>
+        /// <param name="context"></param>
         /// <returns></returns>
-        public async Task FunctionHandler(SQSEvent evnt, ILogger<Function> logger)
+        public async Task FunctionHandler(SQSEvent evnt, ILambdaContext context)
         {
-            foreach (var _ in evnt.Records)
+            try
             {
-                using (IServiceScope scope = _serviceProvider.CreateScope())
+                foreach (var _ in evnt.Records)
                 {
-                    var useCase = scope.ServiceProvider.GetService<UseCase>();
-                    IEnumerable<StockLocationAddress> result = await useCase.Execute();
-
-                    foreach (StockLocationAddress stockLocationAddress in result)
+                    using (IServiceScope scope = _serviceProvider.CreateScope())
+                    using (LogContext.PushProperty("CorrelationId", context.AwsRequestId))
                     {
-                        logger.LogInformation(
-                            "Id: {StockLocationId} DisplayName: {DisplayName}", stockLocationAddress.StockLocationId, stockLocationAddress.DisplayName);
+
+                        ILogger<Function> logger = scope.ServiceProvider.GetService<ILoggerFactory>().CreateLogger<Function>();
+                        try
+                        {
+                            var useCase = scope.ServiceProvider.GetService<UseCase>();
+
+                            IEnumerable<StockLocationAddress> result = await useCase.Execute();
+
+                            foreach (StockLocationAddress stockLocationAddress in result)
+                            {
+                                logger.LogInformation(
+                                    "Id: {StockLocationId} DisplayName: {DisplayName}",
+                                    stockLocationAddress.StockLocationId, stockLocationAddress.DisplayName);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.LogCritical(ex, "Exception when executing the usecase");
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                context.Logger.LogLine(ex.Message);
+                throw;
             }
         }
     }
