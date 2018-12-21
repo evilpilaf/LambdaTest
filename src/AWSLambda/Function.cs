@@ -6,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog.Context;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -50,7 +49,10 @@ namespace AWSLambda
                     using (LogContext.PushProperty("CorrelationId", context.AwsRequestId))
                     {
 
-                        ILogger<Function> logger = scope.ServiceProvider.GetService<ILoggerFactory>().CreateLogger<Function>();
+                        ILogger<Function> logger = scope
+                                                   .ServiceProvider
+                                                   .GetService<ILoggerFactory>()
+                                                   .CreateLogger<Function>();
                         try
                         {
                             var useCase = scope.ServiceProvider.GetService<UseCase>();

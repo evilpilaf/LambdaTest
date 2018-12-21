@@ -9,6 +9,8 @@ using Serilog.Formatting.Json;
 using System;
 using System.IO;
 
+using Amazon.KeyManagementService;
+
 namespace AWSLambda
 {
     internal static class LambdaBootstrapper
@@ -30,13 +32,12 @@ namespace AWSLambda
                       .WriteTo.Console(new JsonFormatter())
                       .CreateLogger();
 
-            
-
             return new ServiceCollection()
                    .AddLogging(builder =>
                        builder.AddSerilog(logger: log, dispose: true))
                    .Configure<PersistenceAdapterSettings>(config.GetSection("Oracle"))
                    .AddScoped<UseCase>()
+                   .AddScoped<AmazonKeyManagementServiceClient>()
                    .AddSecretManagementAdapter()
                    .AddPersistenceAdapter()
                    .BuildServiceProvider();
