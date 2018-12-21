@@ -147,6 +147,7 @@ Task("Test-Unit")
     });
 
 Task("Publish")
+    .IsDependentOn("Build")
     .Description("Publish the Lambda Functions.")
     .Does(() =>
     {
@@ -181,6 +182,7 @@ Task("Publish")
     });
 
 Task("Pack")
+    .IsDependentOn("Publish")
 	.Description("Packs all the different parts of the project.")
 	.Does(() =>
     {
