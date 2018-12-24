@@ -1,4 +1,4 @@
-﻿using LambdaCore;
+using LambdaCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Adapter;
@@ -10,6 +10,8 @@ using System;
 using System.IO;
 
 using Amazon.KeyManagementService;
+
+using Microsoft.Extensions.Logging;
 
 namespace AWSLambda
 {
@@ -34,7 +36,7 @@ namespace AWSLambda
 
             return new ServiceCollection()
                    .AddLogging(builder =>
-                       builder.AddSerilog(logger: log, dispose: true))
+                       builder.AddLambdaLogger().AddSerilog(logger: log, dispose: true))
                    .Configure<PersistenceAdapterSettings>(config.GetSection("Oracle"))
                    .AddScoped<UseCase>()
                    .AddScoped<AmazonKeyManagementServiceClient>()
