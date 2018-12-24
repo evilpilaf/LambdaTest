@@ -69,7 +69,7 @@ Resources:
         AppGroup: !Sub "${AWS::StackName}"
         AppRole: "function"
         Environment: !Ref "Environment"
-        Role: !ImportValue "iam-lambda-basic-execution-role-arn"
+      Role: !ImportValue "iam-lambda-basic-execution-role-arn"
       Events:
         SQSEvent:
           Type: SQS
