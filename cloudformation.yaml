@@ -99,6 +99,8 @@ Resources:
           Value: !Sub "${AppGroup}"
         - Key: "Environment"
           Value: !Ref "Environment"
+        - Key: "AppRole"
+          Value: "queue"
   QueuePublishingPolicy:
     Type: "AWS::SQS::QueuePolicy"
     Properties:
