@@ -111,6 +111,10 @@ Resources:
             Principal: "*"
             Action:
               - sqs:SendMessage
+            Resource: !GetAtt "SQSQueue.Arn"
+            Condition:
+              ArnLike:
+                aws:SourceArn: !Sub "arn:aws:*:eu-west-1:${AWS::AccountId}:*"
       Queues:
         - !Ref SQSQueue
   QueueReadingPolicy:
@@ -129,7 +133,10 @@ Resources:
               - "sqs:ChangeMessageVisibility"
               - "sqs:ChangeMessageVisibilityBatch"
               - "sqs:GetQueueUrl"
-            Resource: !GetAtt "SM1ProofOfConceptLambda.Arn"
+            Resource: !GetAtt "SQSQueue.Arn"
+            Condition:
+              ArnEquals:
+                aws:SourceArn: !Ref "SM1ProofOfConceptLambda"
       Queues:
         - !Ref SQSQueue
 
