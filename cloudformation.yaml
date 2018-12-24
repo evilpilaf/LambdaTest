@@ -70,73 +70,9 @@ Resources:
         AppRole: "function"
         Environment: !Ref "Environment"
       Role: !ImportValue "iam-lambda-basic-execution-role-arn"
-      Events:
-        SQSEvent:
-          Type: SQS
-          Properties:
-            Queue: !GetAtt SQSQueue.Arn
-            BatchSize: 1
       Environment:
         Variables:
           Oracle__DataSource: !Ref OracleHost
           Oracle__UserId: !Ref OracleUserName
           Oracle__Password: !Ref OraclePassword
           Oracle__LoadBalancing: !Ref IsLoadBalancing
-  SQSQueue:
-    Type: "AWS::SQS::Queue"
-    Properties:
-      DelaySeconds: 0
-      QueueName: !Sub "${AppGroup}-queue"
-      ReceiveMessageWaitTimeSeconds: 20
-      MaximumMessageSize: 262144
-      MessageRetentionPeriod: 1209600
-      VisibilityTimeout: 30
-      Tags:
-        - Key: "Name"
-          Value: !Sub "${AppGroup}"
-        - Key: "AppGroup"
-          Value: !Sub "${AppGroup}"
-        - Key: "Environment"
-          Value: !Ref "Environment"
-        - Key: "AppRole"
-          Value: "queue"
-  QueuePublishingPolicy:
-    Type: "AWS::SQS::QueuePolicy"
-    Properties:
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Sid: Allow-SendingMessages-To-All-Aws-Users
-            Effect: Allow
-            Principal: "*"
-            Action:
-              - sqs:SendMessage
-            Resource: !GetAtt "SQSQueue.Arn"
-            Condition:
-              ArnLike:
-                aws:SourceArn: !Sub "arn:aws:*:eu-west-1:${AWS::AccountId}:*"
-      Queues:
-        - !Ref SQSQueue
-  QueueReadingPolicy:
-    Type: "AWS::SQS::QueuePolicy"
-    Properties:
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Sid: Allow-SendingMessages-To-All-Aws-Users
-            Effect: Allow
-            Principal: "*"
-            Action:
-              - "sqs:ReceiveMessage"
-              - "sqs:DeleteMessage"
-              - "sqs:DeleteMessageBatch"
-              - "sqs:ChangeMessageVisibility"
-              - "sqs:ChangeMessageVisibilityBatch"
-              - "sqs:GetQueueUrl"
-            Resource: !GetAtt "SQSQueue.Arn"
-            Condition:
-              ArnEquals:
-                aws:SourceArn: !Ref "SM1ProofOfConceptLambda"
-      Queues:
-        - !Ref SQSQueue
-
