@@ -111,6 +111,25 @@ Resources:
             Principal: "*"
             Action:
               - sqs:SendMessage
-            Resource: !GetAtt "SQSQueue.Arn"
       Queues:
         - !Ref SQSQueue
+  QueueReadingPolicy:
+    Type: "AWS::SQS::QueuePolicy"
+    Properties:
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: Allow-SendingMessages-To-All-Aws-Users
+            Effect: Allow
+            Principal: "*"
+            Action:
+              - "sqs:ReceiveMessage"
+              - "sqs:DeleteMessage"
+              - "sqs:DeleteMessageBatch"
+              - "sqs:ChangeMessageVisibility"
+              - "sqs:ChangeMessageVisibilityBatch"
+              - "sqs:GetQueueUrl"
+            Resource: !GetAtt "SM1ProofOfConceptLambda.Arn"
+      Queues:
+        - !Ref SQSQueue
+
