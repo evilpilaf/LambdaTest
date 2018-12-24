@@ -226,7 +226,7 @@ Task("AwsCliPackage")
 
         var settings = new ProcessSettings
         {
-            Arguments = $"cloudformation package --template-file cloudformation/cloudformation.yaml --s3-bucket {samArtifactsBucket} --output-template-file packaged.yaml",
+            Arguments = $"cloudformation package --template-file cloudformation.yaml --s3-bucket {samArtifactsBucket} --output-template-file packaged.yaml",
         };
 
         Information("Starting AWS CLI Packaging of Lambda Function");
@@ -238,14 +238,56 @@ Task("AwsCliPackage")
         Information("AWS CLI Package has finished.");
     });
 
+Task("Build-Local-Environment-Variables")
+    .Description("Parses the development.parameters.json file into the format required by SAM local for ussage.")
+    .WithCriteria(BuildSystem.IsLocalBuild)
+    .Does(()=>{
+        var devEnvParametersFilePath = "./development.parameters.json";
+        var config = Newtonsoft.Json.Linq.JArray.Parse(System.IO.File.ReadAllText(devEnvParametersFilePath));
+        var envVariables = new StringBuilder();
+
+        envVariables.AppendLine($"{{\"{functionName}\":{{");
+
+        foreach (JToken jToken in config.Children())
+        {
+            var a = jToken["ParameterKey"].Value<string>();
+            string key;
+            switch (a)
+            {
+                case "OracleHost":
+                    key = "Oracle__DataSource";
+                    break;
+                case "OracleUserName":
+                    key = "Oracle__UserId";
+                    break;
+                case "OraclePassword":
+                    key = "Oracle__Password";
+                    break;
+                case "IsLoadBalancing":
+                    key = "Oracle__LoadBalancing";
+                    break;
+                case "Environment":
+                    key= "Environment";
+                    break;
+                default:
+                    throw new Exception($"{a} isn't a known property");
+            }
+            var configEntry = $"\"{key}\": \"{jToken["ParameterValue"].Value<string>()}\",";
+            envVariables.AppendLine(configEntry);
+        }
+        envVariables.AppendLine("}}");
+        WriteAllText("env.json", envVariables.ToString());
+    });
+
 Task("Deploy-Local")
+    // .IsDependentOn("Build-Local-Environment-Variables")
 	.Description("Runs all the acceptance tests locally.")
     .WithCriteria(BuildSystem.IsLocalBuild)
 	.Does(() =>
     {
         var settings = new ProcessSettings
         {
-            Arguments = $"local invoke \"{functionName}\" -e event.json --template cloudformation/cloudformation.yaml --env-vars env.json",
+            Arguments = $"local invoke \"{functionName}\" -e event.json --template cloudformation.yaml --env-vars env.json",
             RedirectStandardOutput = true,
             RedirectStandardError = true
         };
