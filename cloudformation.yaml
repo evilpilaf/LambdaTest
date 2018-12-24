@@ -54,7 +54,7 @@ Resources:
     Type: "AWS::Serverless::Function"
     Properties:
       Handler: "AWSLambda::AWSLambda.Function::FunctionHandler"
-      Runtime: dotnetcore2.1
+      Runtime: dotnetcore2.0
       CodeUri: ./artifacts/AWSLambda.zip
       Description: ""
       MemorySize: 512
