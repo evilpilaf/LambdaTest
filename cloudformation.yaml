@@ -4,7 +4,7 @@ Description: Private resources for the Lambda POC from Stock Management 1 team
 Parameters:
   AppGroup:
     Type: String
-    Default: restocking-accepted-proposal-sender
+    Default: mauricio-test
   Environment:
     Type: String
     AllowedValues:
@@ -87,7 +87,7 @@ Resources:
     Type: "AWS::SQS::Queue"
     Properties:
       DelaySeconds: 0
-      QueueName: !Sub "${AppGroup}"
+      QueueName: !Sub "${AppGroup}-queue"
       ReceiveMessageWaitTimeSeconds: 20
       MaximumMessageSize: 262144
       MessageRetentionPeriod: 1209600
