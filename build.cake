@@ -242,11 +242,11 @@ Task("Build-Local-Environment-Variables")
     .Description("Parses the development.parameters.json file into the format required by SAM local for ussage.")
     .WithCriteria(BuildSystem.IsLocalBuild)
     .Does(()=>{
-        var devEnvParametersFilePath = "./development.parameters.json";
+        var devEnvParametersFilePath = "./cloudformation/development.parameters.json";
         var config = Newtonsoft.Json.Linq.JArray.Parse(System.IO.File.ReadAllText(devEnvParametersFilePath));
         var envVariables = new StringBuilder();
 
-        envVariables.AppendLine($"{{\"{functionName}\":{{");
+        envVariables.Append($"{{\"{functionName}\":{{");
 
         foreach (JToken jToken in config.Children())
         {
@@ -273,9 +273,10 @@ Task("Build-Local-Environment-Variables")
                     throw new Exception($"{a} isn't a known property");
             }
             var configEntry = $"\"{key}\": \"{jToken["ParameterValue"].Value<string>()}\",";
-            envVariables.AppendLine(configEntry);
+            envVariables.Append(configEntry);
         }
-        envVariables.AppendLine("}}");
+        envVariables.Length--;
+        envVariables.Append("}}");
         WriteAllText("env.json", envVariables.ToString());
     });
 
