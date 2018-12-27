@@ -40,6 +40,7 @@ namespace Persistence.Adapter.Oracle.Queries
 
             using (var cnn = new OracleConnection(builder.ConnectionString))
             {
+                _logger.LogDebug("DB connection created");
                 await cnn.OpenAsync();
                 _logger.LogDebug("DB connection open");
                 return await cnn.QueryAsync<StockLocationAddress>(_query);

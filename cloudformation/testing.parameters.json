@@ -5,7 +5,7 @@
     },
     {
         "ParameterKey": "OracleHost",
-        "ParameterValue": "nlam01-devora-scan.servers.coolblue.nl"
+        "ParameterValue": "(DESCRIPTION = (LOAD_BALANCE = ON) (ADDRESS = (PROTOCOL = TCP)(HOST = nlam01-devora-scan.servers.coolblue.nl)(PORT = 1521)) (CONNECT_DATA = (SERVICE_NAME = SPAWN2_SRV)))"
     },
     {
         "ParameterKey": "OracleUserName",
