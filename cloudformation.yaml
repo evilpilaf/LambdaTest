@@ -30,12 +30,20 @@ Parameters:
       - "True"
       - "False"
     Default: "False"
+Mappings:
+  Environment:
+    testing:
+      OracleCidr: "192.168.112.32/28"
 Resources:
   PrivateSecurityGroup:
     Type: "AWS::EC2::SecurityGroup"
     Properties:
       GroupDescription: "Allowed incoming/outgoing traffic to/from the internal resources"
       SecurityGroupEgress:
+        - CidrIp: !FindInMap ["Environment", !Ref "Environment", "OracleCidr"]
+          FromPort: 1521
+          ToPort: 1521
+          IpProtocol: "tcp"
         - CidrIp: "0.0.0.0/0"
           FromPort: 443
           ToPort: 443
