@@ -1,22 +1,22 @@
 [
-    {
-        "ParameterKey": "Environment",
-        "ParameterValue": "testing"
-    },
-    {
-        "ParameterKey": "OracleHost",
-        "ParameterValue": "(DESCRIPTION = (LOAD_BALANCE = ON) (ADDRESS = (PROTOCOL = TCP)(HOST = nlam01-devora-scan.servers.coolblue.nl)(PORT = 1521)) (CONNECT_DATA = (SERVICE_NAME = SPAWN2_SRV)))"
-    },
-    {
-        "ParameterKey": "OracleUserName",
-        "ParameterValue": "srv_stockpurchasing_mql"
-    },
-    {
-        "ParameterKey": "OraclePassword",
-        "ParameterValue": "AQICAHiNOBEuni11Hz0dSHsiY7U5P7Dm7sjuhtV0LFLYcz6mpgErVqC/yAFol9PAWPPG1eYEAAAAZDBiBgkqhkiG9w0BBwagVTBTAgEAME4GCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMz3K6n8kyhyqJR7cqAgEQgCH935jyfD32TmzWXYbHyjDXsBuJQuw5u8yofbt1FLxMj2g="
-    },
-    {
-        "ParameterKey": "IsLoadBalancing",
-        "ParameterValue": "True"
-    }
+  {
+    "ParameterKey": "Environment",
+    "ParameterValue": "testing"
+  },
+  {
+    "ParameterKey": "OracleHost",
+    "ParameterValue": "(DESCRIPTION = (LOAD_BALANCE = ON) (ADDRESS = (PROTOCOL = TCP)(HOST = nlam01-devora-scan.servers.coolblue.nl)(PORT = 1521)) (CONNECT_DATA = (SERVICE_NAME = SPAWN2_SRV)))"
+  },
+  {
+    "ParameterKey": "OracleUserName",
+    "ParameterValue": "srv_stockpurchasing_mql"
+  },
+  {
+    "ParameterKey": "OraclePassword",
+    "ParameterValue": "AQICAHiNOBEuni11Hz0dSHsiY7U5P7Dm7sjuhtV0LFLYcz6mpgErVqC/yAFol9PAWPPG1eYEAAAAZDBiBgkqhkiG9w0BBwagVTBTAgEAME4GCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMz3K6n8kyhyqJR7cqAgEQgCH935jyfD32TmzWXYbHyjDXsBuJQuw5u8yofbt1FLxMj2g="
+  },
+  {
+    "ParameterKey": "IsLoadBalancing",
+    "ParameterValue": "True"
+  }
 ]
