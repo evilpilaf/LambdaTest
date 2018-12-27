@@ -53,9 +53,11 @@ namespace AWSLambda
                                                    .ServiceProvider
                                                    .GetService<ILoggerFactory>()
                                                    .CreateLogger<Function>();
+                        logger.LogDebug("Logger created");
                         try
                         {
                             var useCase = scope.ServiceProvider.GetService<UseCase>();
+                            logger.LogDebug("useCase created");
 
                             IEnumerable<StockLocationAddress> result = await useCase.Execute();
 
