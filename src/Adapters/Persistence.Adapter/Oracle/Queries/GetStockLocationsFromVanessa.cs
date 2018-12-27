@@ -57,7 +57,7 @@ namespace Persistence.Adapter.Oracle.Queries
             "select"
             + "  sl.STOCKLOCATIONID,"
             + "  sla.STOCKLOCATIONADDRESSID,"
-            + "  sla.ADDRESSDESCRIPTION"
+            + "  sla.ADDRESSDESCRIPTION as DISPLAYNAME"
             + " from"
             + "   VAN_STOCKLOCATION sl"
             + "   inner join VAN_STOCKLOCATIONSTOCKCLUSTER slsc on slsc.STOCKLOCATIONID = sl.STOCKLOCATIONID"
