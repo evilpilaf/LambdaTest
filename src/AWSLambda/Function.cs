@@ -48,7 +48,6 @@ namespace AWSLambda
                     using (IServiceScope scope = _serviceProvider.CreateScope())
                     using (LogContext.PushProperty("CorrelationId", context.AwsRequestId))
                     {
-
                         ILogger<Function> logger = scope
                                                    .ServiceProvider
                                                    .GetService<ILoggerFactory>()

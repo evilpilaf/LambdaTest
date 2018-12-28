@@ -33,8 +33,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Adapters\SecretManagement.Adapter\SecretManagement.Adapter.csproj" />
     <ProjectReference Include="..\Adapters\Persistence.Adapter\Persistence.Adapter.csproj" />
+    <ProjectReference Include="..\Adapters\SecretManagement.Adapter\SecretManagement.Adapter.csproj" />
     <ProjectReference Include="..\LambdaCore\LambdaCore.csproj" />
   </ItemGroup>
 
